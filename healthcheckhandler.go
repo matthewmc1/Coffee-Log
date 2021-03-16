@@ -15,8 +15,6 @@ func NewHealthCheck(l *log.Logger) *HealthChecks {
 	return &HealthChecks{l}
 }
 
-var version = "0.0.1"
-
 func (hc *HealthChecks) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	hc.l.Printf("Server process id: %d", os.Getpid())
 
