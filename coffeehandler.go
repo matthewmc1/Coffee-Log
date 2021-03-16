@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -65,11 +66,21 @@ func (c *Coffees) createCoffee(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	for _, element := range CoffeeList {
+		if element.ID == coffee.ID {
+			rw.WriteHeader(http.StatusExpectationFailed)
+			rw.Write([]byte("Record has not been created, as the id provided already exists in the database"))
+			c.l.Printf("Duplicate created received was %#v", coffee)
+			return
+		}
+	}
+
 	c.l.Printf("Coffee details that are being created are %s", coffee.NAME)
 	addCoffee(&coffee)
 
 	rw.WriteHeader(http.StatusCreated)
-	rw.Write([]byte("Record created"))
+	str := fmt.Sprintf("Coffee log has been created for id %d at %s", coffee.ID, time.Now().UTC().String())
+	rw.Write([]byte(str))
 }
 
 func (c *Coffees) updateCoffee(rw http.ResponseWriter, r *http.Request) {
@@ -81,7 +92,7 @@ func (c *Coffees) updateCoffee(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c.l.Printf("Request to create coffee log at %s with content %s and from host %s", time.Now().UTC().String(), body, r.Host)
+	c.l.Printf("Request to update coffee log at %s with content %s and from host %s", time.Now().UTC().String(), body, r.Host)
 
 	var coffee Coffee
 	err = json.Unmarshal([]byte(body), &coffee)
@@ -97,11 +108,17 @@ func (c *Coffees) updateCoffee(rw http.ResponseWriter, r *http.Request) {
 
 	id := coffee.ID
 
-	for ix, element := range CoffeeList {
+	for idx, element := range CoffeeList {
 		if element.ID == id {
-			CoffeeList[ix] = &coffee
+			CoffeeList[idx] = &coffee
 			rw.WriteHeader(http.StatusAccepted)
-			rw.Write([]byte("Record updated"))
+
+			c.l.Printf("Update request has been processed for id %d at %s", id, time.Now().UTC().String())
+			c.l.Printf("Previous Coffee record is %#v", element)
+			c.l.Printf("New Coffee record is %#v", coffee)
+
+			str := fmt.Sprintf("Update request has been processed for id %d at %s", id, time.Now().UTC().String())
+			rw.Write([]byte(str))
 			return
 		}
 	}

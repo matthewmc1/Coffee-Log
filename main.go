@@ -14,7 +14,7 @@ import (
 func main() {
 
 	l := log.New(os.Stdout, "coffee-api ", 3)
-	l.Printf("Service is starting on process id %v\n", os.Getpid())
+	l.Printf("Service has started on process id %v and port %s", os.Getpid(), PORT)
 
 	router := mux.NewRouter()
 	router.NewRoute().Path("/coffee").Handler(NewCoffee(l)).Methods("GET", "POST", "PUT")
