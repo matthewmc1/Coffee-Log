@@ -8,7 +8,7 @@ type Coffee struct {
 	ID        int      `json:"id"`
 	NAME      string   `json:"name"`
 	TASTE     []string `json:"tasteNotes,omitempty"`
-	ISO       string   `json:"isoCountryCOde,omitempty"`
+	ISO       string   `json:"isoCountryCode,omitempty"`
 	VARIETY   string   `json:"variety,omitempty"`
 	GRINDSIZE int      `json:"grindSize,omitempty"`
 	IN        int      `json:"doseIn,omitempty"`
@@ -23,6 +23,10 @@ type Coffee struct {
 
 func AllCoffee() []*Coffee {
 	return CoffeeList
+}
+
+func addCoffee(c *Coffee) {
+	CoffeeList = append(CoffeeList, c)
 }
 
 var CoffeeList = []*Coffee{

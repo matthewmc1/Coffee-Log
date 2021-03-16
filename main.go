@@ -12,17 +12,17 @@ import (
 )
 
 func main() {
-	log.Println("Server is starting")
 
-	l := log.New(os.Stdout, "coffee-api", 2)
+	l := log.New(os.Stdout, "coffee-api ", 3)
+	l.Printf("Service is starting on process id %v\n", os.Getpid())
 
 	router := mux.NewRouter()
-	router.NewRoute().Path("/coffee").Handler(NewCoffee(l)).Methods("GET", "POST")
+	router.NewRoute().Path("/coffee").Handler(NewCoffee(l)).Methods("GET", "POST", "PUT")
 	router.NewRoute().Path("/health").Handler(NewHealthCheck(l)).Methods("GET")
 
 	srv := &http.Server{
 		Handler:      router,
-		Addr:         *&PORT,
+		Addr:         PORT,
 		IdleTimeout:  120 * time.Second,
 		WriteTimeout: 3 * time.Second,
 		ReadTimeout:  3 * time.Second,
